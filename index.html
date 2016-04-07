@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Test</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+	<script src="https://fb.me/react-0.13.3.min.js"></script>
+	<script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+	<script src="/react/react.js"></script>
+	<script src="/react/react-dom.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+
+
+	<style>
+	body {
+		  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		  width:100%;
+		}
+		
+		ul { float:left; display:block; width:24%; min-width:150px; background-color:#eee; margin:0px 1% 1% 0px;  padding:0px;}
+		li { float:left; display:block; clear:both; padding:10px; margin:1px; background-color:#000; color:#fff; }
+
+		.focused { font-weight:bold; }
+		.ports { width:40%; min-width:300px; cursor:pointer; }
+
+	</style>
+
+</head>
+<body>
+	<div id="menu"></div>
+	<div id="test"></div>
+
+
+	<script type="text/babel">
+
+		var ShowPorts = React.createClass({
+
+		    getInitialState: function(){
+		        return { focused: 0 };
+		    },
+
+		    clicked: function(index){
+
+		        this.setState({focused: index});
+		    },
+
+		    render: function() {
+
+		        var self = this;
+		        return (							
+		            <div>
+		                <ul className='ports' >{ this.props.dataurl.map(function(m, index){
+		        
+		                    var style = '';
+		         
+		                    if(self.state.focused == index){
+		                        style = 'focused';
+		                    }
+		        			
+		                    return (<li className={style} onClick={self.clicked.bind(self, index)}>{index+1} - {m}</li> );
+
+		                }) }
+		                        
+		                </ul>
+		                
+		                <div><strong>Show results for url:</strong> {this.props.dataurl[this.state.focused]}</div>
+
+		            </div>
+		        );
+
+		    }
+		});
+
+		ReactDOM.render(
+		    <ShowPorts dataurl={ [
+		    'http://artyomov.ru/js.php',//rs485
+		    'http://toxxin.duckdns.org/kkweb_php/api/v0/config/can',//can
+		    'http://toxxin.duckdns.org/kkweb_php/api/v0/config/ntp',//ntp
+		    'http://toxxin.duckdns.org/kkweb_php/api/v0/config/net',//net
+		    'http://toxxin.duckdns.org/kkweb_php/api/v0/config/umn',//umn
+		    'http://toxxin.duckdns.org/kkweb_php/api/v0/config/ksk'//ksk
+		    ] } />,
+		    document.getElementById('menu') 
+		);
+
+//		ReactDOM.render( <h1>!</h1>, document.getElementById('example') );
+
+
+
+		var PortString = React.createClass({
+
+		    getInitialState: function(){
+		        return { ObjId: 0 };
+		    },
+
+		    render: function(){
+		    	return ( <ul> {this.props.ite.map( 
+		    		function(m) { return <li>{m}</li>; } 
+		    	) } </ul> );
+		    }
+		});
+
+		var UpdatePos = React.createClass({
+
+			getInitialState: function () {
+				return { now: 0 };
+		    },
+
+		    render: function () {
+
+
+		        return (							
+		            <div> 
+					$.getJSON(this.props.url, function(data){
+			            var myArray = [];
+			            var items = [];
+			            var i = 0;
+
+			            $.each(data, function(key, val){
+							$.each(val, function(keys, vals){
+								myArray[i]=keys;
+								i++;
+								myArray[i]=vals;
+								i++;
+			          	    });
+			          	});
+
+						ReactDOM.render(
+							<PortString ite={ myArray } />,
+							document.getElementById('test')
+						);
+			       	});
+			       	</div>
+				}
+			}
+		});
+
+
+
+	</script>
+
+</body>
+</html>
